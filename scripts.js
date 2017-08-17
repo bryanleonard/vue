@@ -1,7 +1,15 @@
-let growler = new Vue({
+let Growler = new Vue({
   el: '#growler',
   data: {
-    appName: 'Growler'
+    appName: 'Growler',
+    query:'',
+    emailMessage: '',
+    isValChecked: 'true',
+    searchIndexes:[],
+    searchIndex: 'beers',
+    selectSearchIndex: 'pubs',
+    selectSearchIndexes: ['beers', 'pubs'],
+    lazyQuery: ''
   }
 
 });

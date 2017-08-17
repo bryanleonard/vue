@@ -62,9 +62,82 @@ Ex. `<h2 v-text="appName"></h2>` "v-text" might also be referred to as the "text
   `v-bind:style="[accentColor, headers]`
 
 - bind to CSS classes
-  - `data: { accentColor: 'accent-color, headers: 'headers'}`<br>
-  `v-bind:class="[accentColor, headers]"`
+  - ```
+    data: { 
+      accentColor: 'accent-color, 
+      headers: 'headers'
+    }
 
+    v-bind:class="[accentColor, headers]"
+    ```
+  - ```
+    // OR
+    data: { ..., 
+      headerStyles: ['accent-color', 'headers']
+    }
+
+    v-bind:class="headerStyles"
+    ```
+  
+  - ```
+    // OR
+    data: {
+      isOnline: false
+    }
+    .headers { color: #000; }
+    ```
+    ```
+    v-bind:class="{ 
+      'headers': true, 
+      'accent-color': isOnline
+    }"
+    ```
+
+### Javascript Expressions
+A line of code that produces a value <br>
+// Ex., **not** let x = location.host.includes('localhost')<br>
+// just location.host.includes('localhost'), which will evaluate to true of false
+<p>Just use {{ ... }}</p>
+
+```
+let growler = new Vue({
+  el: $growler,
+  data: {
+    appName: 'Growler',
+    isOnline: false
+  }
+});
+```
+```
+<h2
+  v-text="appName" 
+  v-bind:style="{color: isOnline ? #'fff' : '#000' }"
+>...
+```
+
+### Binding with Forms
+**Text fields** 
+```
+let growler = new Vue({
+  el: $growler,
+  data: {
+    appName: 'Growler',
+    query: ''
+  }
+});
+
+<input v-model="query" placeholder="Search">
+```
+
+### Modifying Bound values
+1. trim string values
+  `<input v-model.trim="query" placeholder="Search">`
+2. convert input values to numbers (uses parseFloat, automatically trims)
+  `<input v-model.number="result" placeholder="2+3=">`
+
+### Lazy Binding HTML (HTML onchange event)
+* Fires when an **input** element's value is modified
+* Fires after an input element has lost the focus
 
 
 
