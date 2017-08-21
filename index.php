@@ -15,7 +15,7 @@
 	  </style>
   </head>
   <body>
-	<section id="growler" class="container pt-3" v-cloak>
+	<section id="growler" class="container pt-3 pb-5" v-cloak>
 	  
 <!--       <h1>{{appName}}</h1> -->
 
@@ -98,11 +98,29 @@
 				v-model.lazy="lazyQuery"
 				placeholder="Search"
 			><br>
-			Input val: {{ lazyQuery }}
+			Lazy Input val (remove focus): {{ lazyQuery }}
 		</p>
 
 <hr>
 
+	<p>
+		<input type="search" v-model="query" placeholder="search">&nbsp;
+		<button type="button" v-on:click="executeSearch">Search</button>&nbsp;
+		<button type="button" v-on:click="eventParam">Search</button>
+		<button type="button" v-on:click="eventParamToken('token', $event)">Search</button>
+	</p>
+
+
+<hr>
+	<h4>Event capturing</h4>
+	<p>Propagating events from top-to-bottom - avoid using this if you can</p>
+	<div v-on:click.capture="grandparentClick">
+		<div c-on:click.capture="parentClick">
+			<button v-on:click.capture="executeSearch">Search</button>
+		</div>
+	</div>
+
+	<h4>Prevent modifier (much like JS preventDefault)</h4>
 
 
 	  

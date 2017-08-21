@@ -129,7 +129,7 @@ let growler = new Vue({
 <input v-model="query" placeholder="Search">
 ```
 
-### Modifying Bound values
+### Modifying Bound values (can be chained)
 1. trim string values
   `<input v-model.trim="query" placeholder="Search">`
 2. convert input values to numbers (uses parseFloat, automatically trims)
@@ -138,8 +138,145 @@ let growler = new Vue({
 ### Lazy Binding HTML (HTML onchange event)
 * Fires when an **input** element's value is modified
 * Fires after an input element has lost the focus
+`<input v-model.lazyLOC ="query" placeholder="Search">`
 
 
 
+### Event capturing (avoid doing this)
+```
+// Propagating events from top-to-bottom
+  <div v-on:click.capture="grandparentClick">
+    <div c-on:click.capture="parentClick">
+      <button type="button" v-on:click.capture="executeSearch">Search</button>
+    </div>
+  </div>
+```
 
+
+
+### Prevent modifier (much like JS preventDefault)
+```
+let growler = new Vue({
+  el: $growler,
+  data: {
+    appName: 'Growler',
+    query: ''
+  },
+  methods: {
+    executeSearch: function() {
+      if (this.query) {
+      ...do something
+      } else {
+      alert('you didn\'t so stuff)
+    }
+    }
+  }
+});
+
+// Note btn type
+<button type="submit" v-on:click.prevent="executeSearch">Search</button>
+```
+
+### Stop modifier - VERY useful
+```
+// Need stop modifier to actually prevent propagation
+// Can apply to parent els to stop propagation further up.
+<button type="submit" v-on:click.stop="executeSearch">Search</button>
+```
+
+### Once modifier
+//Doesn't stop propagation
+```
+data: {
+  query: '',
+  isRunning: false
+}
+methods: {
+  executeSearch: function() {
+    this.isRunning ' true';
+    document.forms[0].submit();
+  }
+}
+<button type="button" 
+  v-on:click.once="executeSearch" 
+  v-bind:disabled="isRunning">Search</button>
+```
+
+
+
+### Bypass Event Propagation by chaining
+```
+<div v-on:click.stop.self="parentClick">
+  <button type="button" 
+    v-on:click="executeSearch">Search</button>
+  </div>
+```
+
+### Handling keypress event
+```
+<form action="" v-on:submit.prevent>
+  <input type="search" 
+    v-model="query"
+    v-on:keyup="evaluateKey"
+    v-on:keyup.enter="executeSearch"
+    >
+  <button v-on:click.once="executeSearch">
+    Search
+  </button>
+</form>
+```
+
+### Custom Key Modifiers
+```
+Vue.config.keyCodes = {
+  f1: 112
+};
+
+<div id="growler" v-on:keydown.f1="openInfo"></div>
+```
+
+### Mouse interactions, can use with mouseup and mousedown
+examples: module-04/altering-events/reacting-to-mouse-events
+*left* modifier: interacts with left mouse button
+*middle* modifier: interacts with middle mouse button
+*right* modifier: interacts with right mouse button
+```
+<div v-on:mousedown.left="onBlockClick">...</div>
+<div v-on:click.left="onBlockClick">...</div>
+<div v-on:click="onBlockClick">...</div>
+
+<div v-on:mousedown.right="onBlockClick">...</div>
+// must use showContextMenu event to disable right-click menus
+data: {
+  showContextMenu: false
+  ...
+}
+<div v-on:contextmenu.prevent="onBlockClick"></div>
+<ul id="myContextMenu"
+  v-if="showContextMenu"
+  v-on:blur="closeContextMenu"
+  v-bind:style="{key: value}">
+  <li>...</li>
+</ul>
+```
+
+### Look into keyboard shortcuts using key modifiers for fun results. (using things like ctrl+click behaviors)
+
+### Rendering conditionally on load (v-cloak)
+module-05/rendering-elements-conditionall/on-load/example-01.html
+
+## Rendering conditionally during runtime
+```
+//great for small examples, 
+<div v-if="beers.length===0"> IF </div>
+<div v-else-if="beers.length===1"> ELSEIF </div>
+<div v-else> ELSE </div>
+
+//for larger recordsets, this changes CSS property. Doesn't re-write the DOM like if/else
+<div v-show="beers.length === 0"> nothing </div>
+<div v-show="beers.length > 0"> Something </div>
+```
+
+
+SAVE10EMAIL
 
