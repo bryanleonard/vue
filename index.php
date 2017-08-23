@@ -112,15 +112,7 @@
 
 
 <hr>
-	<h4>Event capturing</h4>
-	<p>Propagating events from top-to-bottom - avoid using this if you can</p>
-	<div v-on:click.capture="grandparentClick">
-		<div c-on:click.capture="parentClick">
-			<button v-on:click.capture="executeSearch">Search</button>
-		</div>
-	</div>
-
-	<h4>Prevent modifier (much like JS preventDefault)</h4>
+	
 
 
 	  

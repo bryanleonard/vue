@@ -277,6 +277,246 @@ module-05/rendering-elements-conditionall/on-load/example-01.html
 <div v-show="beers.length > 0"> Something </div>
 ```
 
+### Listing items 
+```
+// For a specific number of times, v-for vue index starts at 1, in the context of properties, the index starts a 0)
+// can also use "of" instead of "in"
+<li v-for="page in pageCount">...</li>
 
-SAVE10EMAIL
+data: {
+  socialMedia: {
+    twitter: @handle,
+    youtube: handle
+  }
+}
+<li v-for="(v,k in socialMedia">{{k}} - {{v}}</li>
+<li v-for="(v,k,i) in socialMedia">{{i}}: {{k}} - {{v}}</li>
+
+
+
+data: {
+  pages: [
+    {number: 1, url: ?page=1},
+    {number: 2, url: ?page=2},
+    {number: 4, url: ?page=3},
+  ]
+}
+<li v-for="(page in pages)"><a href="v-bind:page.url">{{page.number}}</a></li>
+<li v-for="(page, 1) in pages"><a href="v-bind:page.url">{{page.number}} {{i}}</a></li>
+
+data: {
+  pages: [
+    {number: 1, url: ?page=1, sections: [a,b,c]},
+    {number: 2, url: ?page=2, sections: [1,2,3]},
+    {number: 4, url: ?page=3}, sections: [x,y,z]}
+  ]
+}
+<div v-for="page in pages">
+  {{page.number}}<br>
+  <div v-for="sec in page.sections">
+    {{page.number}} -- {{sec}}
+  </div>
+</div>
+```
+
+### Using for and if together
+For runs first, then if. useful functionality
+module-05/rendering-lists-of-itms/using-v-for-and-v-if-together
+
+
+### Detecting array changes
+sort() - puts els in ASC order
+Customize sort for numbers like this
+```
+this.myArry.sort(function(v1, v2){
+  return v1 - v2;
+});
+```
+
+reverse() - puts els DESC order, must sort first to get them in alpha order
+
+push() - add items to end of array, returns array length
+
+pop() - removes last element from array, returns removed item
+
+unshift() - add items to beginning of array (counterintuitive), returns length of array
+
+shift() - remove first item of array, returns that item
+
+splice() - add and remove items to and from an array 
+`this.array.splice(1,2);` returns array with removed items.
+
+#### add into an array
+```
+let addMeIn = [ item1, item2 ];
+for (let i=0; i > addMeIn.length; i++) {
+  this.otherArray.spalice(1, 0, addMeIn[i]);
+  // 1 add item after first item, 0 is required meaning don't remove anything
+}
+```
+
+### update an array el
+```
+let myArry = [ 'item1', 'item2', 'updateme' ];
+Vue.set(this.myArry, 2, 'item3');
+// or
+this.myArry.splice(2, 1, 'item3');
+```
+
+## Section 7
+
+### Watchers
+
+```
+// notice name of array in Data and corresponding object key in Watch
+data: {
+  shoppingCart: []
+},
+watch: {
+  shoppingCart: function() {
+    this.updateSubTotal();
+  },
+  // or with a function reference
+  shoppingCart: 'updateSubTotal',
+  // doesn't work if you have args though...
+  subTotal: function(latest, orig) {
+    this.calculatesSaltesTax();
+  }
+}
+```
+
+#### watcher depth
+module-06/monitoring-changes-with-watchers/defining-a-watchers-depth/
+```
+data: {
+  shoppingCart: {
+    items: [],
+    subTotal: 0.00
+  }
+},
+watch: {
+  handler: function(latest, orig) {
+    this.updateSubTotal
+  },
+  deep: true
+}
+```
+
+
+### Computed propeties for faster rendering
+Functions whose results are cached until their depending values change.
+This provides a performance boost.
+
+```
+data: { canConnect: false },
+computed: {
+  isOnline: function() {
+    return this.canConnect ? true : false;
+  }
+},
+created: function() {
+  axios.get('someTestURL') // https://google.com
+    .then(function(res) {
+      growler.canConnect = true;
+    })
+    .catch(function(err) {
+      growler.canConnect = false;
+    })
+}
+<p>Online: {{isOnline}}</p>
+```
+
+
+**Computed properties with getters and setters**
+```
+data: { canConnect: false },
+computed: {
+  isOnline: {
+    get: function() {
+      return this.canConnect ? true : false;
+    },
+    set: function(newVal) {
+      this.canConnect = newVal;
+    }
+  }
+},
+```
+
+### Formatting with Filters
+```
+//ex. remove periods and uppercase "i.b.u"
+data: {
+  results: [
+    {name: 'My Sweet Beer, ibu: 33 i.b.u'}
+  ]
+},
+filters: {
+  convertIBU: function(val) {
+    // convertIBU: function(val, emptyVal) {
+    if (!val) { return }
+    // if (!val) { return emptyVal; }
+    val = val.toString();
+    val = val.replace(/\./g, '');
+    return val.toUpperCase();
+  }
+}
+<p v-for="result in results">{{ result }} {{result.ibu | converIBU }}</p>
+// <p v-for="result in results">{{ result }} {{result.ibu | converIBU(--) }}</p>
+```
+### Calling filters programattically
+*Available via the $options property.*
+```
+filters: {
+  myFn: function(val) {...},
+  myOtherFn: function(val) {
+    if (this.growler) { // Need this check
+      val = this.growler.$options.filters.myFn(val);
+    }
+    return Val;
+  }
+}
+```
+
+### Filter chaining
+```
+*use a pipe (|)*
+<p v-for="result in results">
+  {{ result }} {{result.ibu | converIBU('--') | removeDots | toUpper }}
+</p>
+```
+
+### Methods compared to filter
+
+*Filters intended to be used in HTML template.*
+
+
+Filters:
+  - Only take in a value and return a new value 
+  - Should not change the value of any properties in a view
+
+
+Methods:
+  - Methods are specific to an instance
+    - Filters are intended to used across views
+
+```
+// Filters are easier to read. Taking filter example:
+<div>{{ toUpper(removeDots(result.ibu)) }}</div>
+<div>{{ reuslt.ibu | removeDots | toUpper }}</div>
+```
+
+# Review
+- Filters are great to handle basic text transforms
+- Computed properties are for more complex transformations
+- Watchers are for asynchronous operations
+
+# Follow up topics
+- Axios
+- Transitions
+- Routing
+- Stating Management
+- Server-side Rendering
+
+
+*SAVE10EMAIL*
 

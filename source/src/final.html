@@ -50,7 +50,7 @@
         </style>
     </head>
     <body>        
-        <div id="growler" v-on:keydown.f1="openInfo">
+        <div id="growler" v-on:keydown.f1="openInfo" v-cloak>
             <div class="container">
                 <div class="row" style="padding:1rem 0rem 0rem;">
                     <div class="col-lg-3">
@@ -175,9 +175,9 @@
                                     <br /><br />
                                     You can reset the data to its original state by clicking the button below.
                                     <br /><br />
-                                    <!--
+                                    
                                     <button id="resetButton" class="btn btn-danger" data-toggle="tooltip" data-placement="left" title="This will reset growler to its original state.">Reset Data</button>
-                                    -->
+                                    
                                 </p>
                             </div>                        
                         </form>                    
@@ -394,7 +394,7 @@
                 el: '#growler',
                 data: {
                     appName: 'Growler',
-                    appLogo: '/public/img/logo.png',
+                    appLogo: 'public/img/logo.png',
                     isOnline: false, 
                     
                     query: '',
@@ -402,12 +402,12 @@
                     results: null,
                     resultCount: 0,
 
-                    searchIndex:'beers',
-                    searchStartedAt:null,
+                    searchIndex: 'beers',
+                    searchStartedAt: null,
                     searchEndedAt: null,
                     
-                    currentPage:1, 
-                    pageSize:7,
+                    currentPage: 1, 
+                    pageSize: 7,
                     pageCount: 0,
 
                     shoppingCart: [],
@@ -474,7 +474,7 @@
                 computed: {
                     queryDuration: function() {
                         var duration = this.searchEndedAt - this.searchStartedAt;
-                        return duration + ' ms';
+                        return (duration > 0 ? duration  : 0) + ' ms';
                     }
                 },
                 created: function() {
